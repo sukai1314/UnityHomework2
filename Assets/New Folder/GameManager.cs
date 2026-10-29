@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public int score ;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI screenText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -19,10 +20,11 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log(score);
         }
-        if (scoreText != null)
+        if (scoreText != null&&screenText!=null)
         {
 
-            scoreText.text = ($"press 'Enter'to make Item \n'C' change Scene \nScare:{score}");
+            scoreText.text = ($"press 'Enter'to make Item \nPress 'Esc' Back StartScene \nScore:{score}");
+            screenText.text = ($"Score:{score}");
         }
     }
 }

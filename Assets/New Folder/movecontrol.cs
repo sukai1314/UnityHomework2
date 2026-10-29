@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class movecontrol : MonoBehaviour
@@ -6,6 +8,13 @@ public class movecontrol : MonoBehaviour
     public float speed =5f;
     public float rotationSpeed =15f;
     public Transform cameraTransform;
+
+    //剛體
+    private Rigidbody rb;
+    public float jumpForce = 5f;
+
+    //射線偵測離地
+    public float rayDistance = 0.1f;
 
     private Animator anim;
 
@@ -26,13 +35,13 @@ public class movecontrol : MonoBehaviour
         {
             cameraTransform=Camera.main.transform;
         }
+        rb = gameObject.GetComponent<Rigidbody>();
     }
     // Update is called once per frame
     void Update()
     {
 
         MoveControl();
-
     }
     public void MoveControl()
     {
@@ -62,12 +71,31 @@ public class movecontrol : MonoBehaviour
         }
         else { anim.SetBool("walk", false);
         }
-
-        if (Input.GetKey(KeyCode.Space))
+        
+        if (Input.GetKeyDown(KeyCode.Space)&& RayGround())
         {
-            Vector3 fallsqeed = Physics.gravity;
-            float jumpHight = Mathf.Sqrt(2f*-fallsqeed.y *2f);
-            transform.position += new Vector3(0f, jumpHight, 0f) * Time.deltaTime;
+
+            //Vector3 fallsqeed = Physics.gravity;
+            //float jumpHight = Mathf.Sqrt(2f*-fallsqeed.y *2f);
+            //transform.position += new Vector3(0f, jumpHight, 0f)*Time.deltaTime;
+
+            //用rigbody內建向上的力
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            
         }
+    }
+    public bool RayGround() 
+    {
+        Vector3 rayOrigin = transform.position;
+        RaycastHit hit;
+
+        bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out hit, rayDistance);
+        Debug.Log($"{hit.collider.gameObject.name}");
+        return isGrounded;
+    }
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, Vector3.down * rayDistance);
     }
 }
